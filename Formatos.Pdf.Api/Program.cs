@@ -1,4 +1,8 @@
+using DinkToPdf.Contracts;
+using DinkToPdf;
+using Formatos.Pdf.Core.Interfaces;
 using Formatos.Pdf.Exceptions;
+using Formatos.Pdf.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -6,8 +10,13 @@ using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var services = builder.Services;
 // Add services to the container.
+
+services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+services.AddTransient<IPdfService, PdfService>();
+
+Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox.dll");
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
